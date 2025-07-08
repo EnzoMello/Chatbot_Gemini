@@ -4,11 +4,11 @@ from dotenv import load_dotenv
 import os
 from PIL import Image
 
-# Carrega as variáveis de ambiente do arquivo .env
-load_dotenv()
+# Tenta carregar a chave do Streamlit Cloud Secrets e se não encontrar (porque estamos rodando localmente), ele tenta carregar do arquivo .env
+api_key = st.secrets.get("GOOGLE_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
-#  Configuração da API e do Modelo (permanece igual) 
-api_key = os.getenv("GOOGLE_API_KEY")
+# O load_dotenv() ainda é útil para o ambiente local
+load_dotenv()
 if not api_key:
     st.error("Chave de API do Google Gemini não encontrada. Por favor, verifique seu arquivo .env.")
     st.stop()
