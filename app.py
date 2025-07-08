@@ -22,7 +22,7 @@ except Exception as e:
     st.error(f"Erro ao inicializar o modelo '{model_name}': {e}.")
     st.stop()
 
-# Interface do Streamlit Atualizada para ser mais genérica 
+# Interface do Streamlit
 st.set_page_config(page_title="Chatbot Gemini Flexível", layout="centered")
 
 st.title("🤖 Chatbot com Gemini")
