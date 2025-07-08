@@ -36,19 +36,18 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption="Imagem enviada. Faça uma pergunta sobre ela ou peça uma descrição.", use_container_width=True)
 
-# Campo de texto genérico para pergunta ou prompt
+# Campo de texto genérico para prompt
 user_prompt = st.text_input("Sua pergunta:", key="prompt_text")
 
-# Lógica de Geração
 if st.button("Enviar"):
-    # Verifica se não há NENHUM input
+    # Verifica se não há nenhum input
     if not user_prompt and not uploaded_file:
         st.warning("Por favor, digite uma pergunta ou envie uma imagem.")
         st.stop() # Para a execução se não houver nada a fazer
 
     with st.spinner("Gemini pensando..."):
         try:
-           # Lógica principal: decide se a chamada é multimodal ou apenas texto
+           #  Decide se a chamada é com imagem ou apenas texto
             if uploaded_file is not None:
                 # Cenário MULTIMODAL (com imagem)
                 image = Image.open(uploaded_file)
@@ -57,9 +56,7 @@ if st.button("Enviar"):
                 # Envia uma lista com texto e imagem
                 contents = [prompt, image]
                 response = model.generate_content(contents)
-            else:
-                # Cenário de texto apenas, enviando só o prompt
-                
+            else:                
                 response = model.generate_content(user_prompt)
 
             # Exibe a resposta
