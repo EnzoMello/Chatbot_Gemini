@@ -2,49 +2,72 @@ import streamlit as st
 import google.generativeai as genai
 from dotenv import load_dotenv
 import os
+from PIL import Image
 
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
 
-# Configura a API do Google Gemini
+#  Configuração da API e do Modelo (permanece igual) 
 api_key = os.getenv("GOOGLE_API_KEY")
 if not api_key:
     st.error("Chave de API do Google Gemini não encontrada. Por favor, verifique seu arquivo .env.")
-    st.stop() # Para a execução se a chave não for encontrada
+    st.stop()
 
 genai.configure(api_key=api_key)
-
-# Configuração do modelo Gemini
-model_name = "gemini-1.5-flash-latest" # Mantenha este primeiro
+model_name = "gemini-1.5-flash-latest"
 
 try:
     model = genai.GenerativeModel(model_name)
 except Exception as e:
-    st.error(f"Erro ao inicializar o modelo '{model_name}': {e}. Verifique se o nome do modelo está correto e se ele está disponível para sua chave de API.")
-    st.stop() # Para a execução se o modelo não puder ser inicializado
+    st.error(f"Erro ao inicializar o modelo '{model_name}': {e}.")
+    st.stop()
 
+# Interface do Streamlit Atualizada para ser mais genérica 
+st.set_page_config(page_title="Chatbot Gemini Flexível", layout="centered")
 
-st.set_page_config(page_title="Chatbot Gemini IA", layout="centered")
+st.title("🤖 Chatbot com Gemini")
+st.write("Faça uma pergunta ou envie uma imagem para análise. Ou os dois!")
 
-st.title("🤖 Chatbot IA com Gemini")
-st.write("Pergunte-me qualquer coisa e eu responderei usando a inteligência artificial do Google Gemini!")
+# Componente de upload de arquivo
+uploaded_file = st.file_uploader("Quer analisar uma imagem? Envie aqui (opcional):", type=["jpg", "jpeg", "png"])
 
-# Campo de entrada de texto para o usuário
-user_input = st.text_input("Sua pergunta:", key="input_text")
+# Mostra a imagem na tela se ela for enviada
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    st.image(image, caption="Imagem enviada. Faça uma pergunta sobre ela ou peça uma descrição.", use_container_width=True)
 
-# Botão para enviar a pergunta
-if st.button("Enviar Pergunta"):
-    if user_input:
-        with st.spinner("Pensando..."):
-            try:
-                # Geração da resposta usando o modelo Gemini
-                response = model.generate_content(user_input)
-                st.success("Resposta:")
-                st.write(response.text)
-            except Exception as e:
-                st.error(f"Ocorreu um erro ao gerar a resposta: {e}")
-    else:
-        st.warning("Por favor, digite sua pergunta antes de enviar.")
+# Campo de texto genérico para pergunta ou prompt
+user_prompt = st.text_input("Sua pergunta:", key="prompt_text")
+
+# Lógica de Geração
+if st.button("Enviar"):
+    # Verifica se não há NENHUM input
+    if not user_prompt and not uploaded_file:
+        st.warning("Por favor, digite uma pergunta ou envie uma imagem.")
+        st.stop() # Para a execução se não houver nada a fazer
+
+    with st.spinner("Gemini pensando..."):
+        try:
+           # Lógica principal: decide se a chamada é multimodal ou apenas texto
+            if uploaded_file is not None:
+                # Cenário MULTIMODAL (com imagem)
+                image = Image.open(uploaded_file)
+                prompt = user_prompt if user_prompt else "Descreva esta imagem em detalhes."
+                
+                # Envia uma lista com texto e imagem
+                contents = [prompt, image]
+                response = model.generate_content(contents)
+            else:
+                # Cenário de texto apenas, enviando só o prompt
+                
+                response = model.generate_content(user_prompt)
+
+            # Exibe a resposta
+            st.success("Resposta do Gemini:")
+            st.markdown(response.text)
+
+        except Exception as e:
+            st.error(f"Ocorreu um erro ao comunicar com a API: {e}")
 
 st.markdown("---")
-st.caption("Desenvolvido com Google Gemini e Streamlit")
+st.caption("Desenvolvido por Enzo Melo.")
