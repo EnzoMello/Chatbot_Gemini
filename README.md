@@ -1,4 +1,4 @@
-# 🤖 Chatbot Multimodal com Google Gemini e Streamlit
+# 🤖 Chatbot Multimodal com Google Gemini
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.35.0-red.svg)
