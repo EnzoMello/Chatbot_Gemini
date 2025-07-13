@@ -1,21 +1,28 @@
+# Importa framework para criar interface web simples
 import streamlit as st
+#importa biblioteca do google para interagir com API do Gemini
 import google.generativeai as genai
+# Importa a biblioteca que lê chave da api no arquivo .env
 from dotenv import load_dotenv
 import os
+# Importa biblioteca para manipulação de imagens
 from PIL import Image
 
-# Tenta carregar a chave do Streamlit Cloud Secrets e se não encontrar (porque estamos rodando localmente), ele tenta carregar do arquivo .env
-api_key = st.secrets.get("GOOGLE_API_KEY") or os.getenv("GOOGLE_API_KEY")
+load_dotenv()
 
-# O load_dotenv() ainda é útil para o ambiente local
+# Tenta carregar a chave do Streamlit Cloud Secrets e se não encontrar (porque estamos rodando localmente), ele tenta carregar do arquivo .env
+api_key = os.getenv("GOOGLE_API_KEY")
+
+
 load_dotenv()
 if not api_key:
     st.error("Chave de API do Google Gemini não encontrada. Por favor, verifique seu arquivo .env.")
     st.stop()
 
 genai.configure(api_key=api_key)
-model_name = "gemini-1.5-flash-latest"
+model_name = "gemini-1.5-flash" # Define modelo do gemini que usaremos
 
+# Tenta criar uma instância do modelo para gerar conteúdo
 try:
     model = genai.GenerativeModel(model_name)
 except Exception as e:
@@ -67,4 +74,3 @@ if st.button("Enviar"):
             st.error(f"Ocorreu um erro ao comunicar com a API: {e}")
 
 st.markdown("---")
-st.caption("Desenvolvido por Enzo Melo.")
