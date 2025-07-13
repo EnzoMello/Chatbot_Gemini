@@ -102,7 +102,6 @@ Seu navegador abrirá automaticamente com o aplicativo em execução!
 * [ ] Implementar **histórico de conversa** (`st.session_state`) para que o bot lembre de interações passadas.
 * [ ] Adicionar **streaming de respostas** para que o texto do bot apareça palavra por palavra, melhorando a experiência do usuário.
 * [ ] Criar uma barra lateral (`st.sidebar`) para opções, como a escolha do modelo Gemini ou o ajuste de parâmetros (temperatura, etc.).
-* [ ] Realizar o deploy do aplicativo no [Streamlit Community Cloud](https://streamlit.io/cloud) para que ele fique acessível publicamente.
 
 ---
 
